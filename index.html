@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buona Festa della Mamma</title>
+    <link rel="icon" href="https://img.icons8.com/?size=100&id=iOOt2G9ECrdc&format=png&color=000000">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,400&family=Montserrat:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --powder-pink: #f8e1e7;
+            --cream: #fcfbf8;
+            --warm-white: #fffcf9;
+            --soft-gold: #d4af37;
+            --light-lavender: #e6e3f0;
+            --text-dark: #4a3f35;
+            
+            /* Colori Premium Busta e Lettera */
+            --p-pink: #f4d0d9;
+            --d-pink: #e8a5b8;
+            --gold: #c5a059;
+            --v2-soft-gold: #e2c285;
+            --v2-cream: #fffdfa;
+            
+            /* Sfumature per 3D Busta */
+            --env-base: #fdfbf7;
+            --env-flap-light: #ffffff;
+            --env-flap-dark: #ebe2d6;
+            --env-border: rgba(200, 185, 170, 0.4);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body, html {
+            width: 100%; height: 100%;
+            overflow: hidden;
+            font-family: 'Lato', sans-serif;
+            background: radial-gradient(circle at center, var(--warm-white) 0%, var(--powder-pink) 70%, var(--light-lavender) 100%);
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        /* Scritta Istruzione */
+        .instruction-text {
+            position: absolute;
+            top: 12%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.4rem;
+            color: #8c7b6d;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            text-align: center;
+            white-space: nowrap;
+            animation: pulseText 2.5s infinite ease-in-out;
+            transition: opacity 0.8s ease;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.4; transform: translateX(-50%) translateY(0); }
+            50% { opacity: 0.9; transform: translateX(-50%) translateY(-5px); }
+        }
+
+        .fade-out { opacity: 0 !important; }
+
+        #particle-canvas {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 50;
+        }
+
+        .scene {
+            position: relative; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            perspective: 1200px;
+            transition: filter 1.5s ease;
+        }
+
+        /* --- PACCO --- */
+        .box-container {
+            position: relative; width: 220px; height: 220px;
+            cursor: pointer; transform-style: preserve-3d;
+            animation: float 4s ease-in-out infinite;
+            z-index: 10;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .box-container.active { animation: none; transform: scale(1.05) translateY(30px); cursor: default; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .box-shadow {
+            position: absolute; bottom: -35px; left: 10%;
+            width: 80%; height: 20px;
+            background: rgba(0,0,0,0.08); border-radius: 50%;
+            filter: blur(10px);
+        }
+
+        .box-base {
+            position: absolute; bottom: 0; width: 100%; height: 150px;
+            background: linear-gradient(135deg, var(--cream) 0%, #eeeadd 100%);
+            border-radius: 10px;
+            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.03), 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        .box-base::after, .box-lid::after {
+            content: ''; position: absolute; left: 50%;
+            transform: translateX(-50%); width: 34px; height: 100%;
+            background: linear-gradient(to right, #e8b0b5, #f1c5c9, #e8b0b5);
+        }
+
+        .box-lid {
+            position: absolute; top: 15px; left: -10px;
+            width: 240px; height: 65px;
+            background: linear-gradient(135deg, var(--cream) 0%, #eeeadd 100%);
+            border-radius: 8px;
+            box-shadow: 0 12px 20px rgba(0,0,0,0.12);
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 20; transform-origin: top center;
+        }
+
+        /* --- FIOCCO REALISTICO 3D --- */
+        .ribbon-bow {
+            position: absolute; top: -32px; left: 50%;
+            transform: translateX(-50%);
+            width: 100px; height: 50px;
+            z-index: 21;
+            transition: all 1s ease-in-out;
+            filter: drop-shadow(0 4px 5px rgba(0,0,0,0.15));
+        }
+
+        /* --- BUSTA PREMIUM --- */
+        .box-content-wrapper {
+            position: absolute; bottom: 45px; left: 50%;
+            transform: translateX(-50%); width: 180px; height: 120px;
+            z-index: 15;
+        }
+
+        .flowers-container {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;
+        }
+
+        .flower {
+            position: absolute; opacity: 0; transform: scale(0) rotate(-45deg);
+            transition: all 2s cubic-bezier(0.2, 1, 0.3, 1);
+            filter: drop-shadow(2px 5px 4px rgba(0,0,0,0.1));
+        }
+
+        .f1 { font-size: 42px; bottom: 5px; left: 0; }
+        .f2 { font-size: 32px; bottom: 25px; left: 65px; }
+        .f3 { font-size: 38px; bottom: 10px; right: 0; }
+
+        .flower.show { opacity: 1; }
+        .f1.show { transform: scale(1) rotate(12deg); }
+        .f2.show { transform: scale(1) rotate(-8deg); }
+        .f3.show { transform: scale(1) rotate(22deg); }
+
+        .envelope-wrapper {
+            position: absolute; bottom: 5px; left: 50%;
+            transform: translateX(-50%) translateY(30px);
+            width: 160px; height: 105px;
+            opacity: 0; transition: all 1.2s cubic-bezier(0.23, 1, 0.32, 1);
+            z-index: 20; perspective: 1000px;
+        }
+
+        .envelope-base {
+            position: relative; width: 100%; height: 100%;
+            background: var(--env-base);
+            box-shadow: 0 10px 30px rgba(60, 50, 40, 0.12);
+            border-radius: 6px; border: 1px solid var(--env-border);
+            overflow: visible;
+        }
+
+        /* La Lettera dentro la busta */
+        .letter-inside {
+            position: absolute; bottom: 5px; left: 5%;
+            width: 90%; height: 85%;
+            background: var(--v2-cream);
+            border: 1px solid rgba(197, 160, 89, 0.2);
+            border-radius: 4px;
+            z-index: 3;
+            transform: translateY(0);
+            transition: transform 2s cubic-bezier(0.45, 0.05, 0.55, 0.95), 
+                        opacity 0.5s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 10px; opacity: 0;
+        }
+
+        .letter-inside::before {
+            content: ""; position: absolute; top: 4px; left: 4px; right: 4px; bottom: 4px;
+            border: 1px solid var(--v2-soft-gold); opacity: 0.4; border-radius: 2px;
+        }
+
+        .envelope-front {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(150deg, var(--env-base) 60%, #f4eee6 100%);
+            clip-path: polygon(0 35%, 50% 75%, 100% 35%, 100% 100%, 0 100%);
+            z-index: 4; border-radius: 0 0 6px 6px;
+        }
+
+        .envelope-flap {
+            position: absolute; top: 0; left: 0; width: 100%; height: 70%;
+            background: linear-gradient(180deg, var(--env-flap-light) 0%, var(--env-flap-dark) 100%);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+            z-index: 5; transform-origin: top center;
+            transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: drop-shadow(0 4px 4px rgba(0,0,0,0.1));
+        }
+
+        /* --- MODIFICA SIGILLO --- */
+        .wax-seal {
+            position: absolute; top: 70%; left: 50%; transform: translate(-50%, -50%);
+            width: 25px; height: 25px;
+            background: radial-gradient(circle at 30% 30%, #e6b8af, #c0392b 80%, #8e1e10);
+            border-radius: 52% 48% 50% 50% / 48% 52% 50% 50%; /* Forma organica */
+            z-index: 10;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3), inset 0 0 8px rgba(0,0,0,0.2);
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.9); font-size: 20px;
+            transition: 0.5s ease;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        /* --- LETTERA FINALE (MODALE) --- */
+        .card-final {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0.7);
+            width: 90%; max-width: 460px;
+            background: var(--v2-cream);
+            padding: 40px 30px; border-radius: 15px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.15);
+            opacity: 0; visibility: hidden; z-index: 500;
+            text-align: center; border: 1px solid rgba(197, 160, 89, 0.2);
+            transition: all 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+            max-height: 85vh; overflow-y: auto;
+        }
+
+        .card-final::before {
+            content: ""; position: absolute; top: 15px; left: 15px; right: 15px; bottom: 15px;
+            border: 1px solid var(--v2-soft-gold); border-radius: 10px;
+            pointer-events: none;
+        }
+
+        .message-title {
+            font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; color: var(--text-dark);
+            margin-bottom: 20px; opacity: 0; transform: translateY(20px);
+        }
+
+        /* --- MODIFICA ELEMENTO IMMAGINE --- */
+        .letter-image-container {
+            width: 100%; max-width: 280px; margin: 0 auto 25px auto;
+            border-radius: 4px; overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 6px solid #fff; outline: 1px solid rgba(0,0,0,0.05);
+            opacity: 0; transform: translateY(20px);
+            transition: all 1.2s ease;
+        }
+
+        .letter-image-container img {
+            width: 100%; height: auto; display: block; filter: sepia(0.1);
+        }
+
+        .message-text {
+            font-family: 'Montserrat', sans-serif; font-size: 1rem; line-height: 1.6;
+            color: #5a5048; opacity: 0; transform: translateY(20px);
+        }
+
+        /* --- ANIMAZIONI --- */
+        .untie { opacity: 0; transform: translateX(-50%) translateY(-20px) scale(1.2); }
+        .open-lid { transform: translateY(-120px) rotateX(30deg); opacity: 0; }
+        .envelope-rise { opacity: 1; transform: translateX(-50%) translateY(-140px) scale(1.7); }
+        
+        .envelope-open .envelope-flap { transform: rotateX(160deg); z-index: 2; }
+        .envelope-open .wax-seal { opacity: 0; transform: translate(-50%, -80%) scale(0.5); }
+        .envelope-open .letter-inside { opacity: 1; }
+
+        .letter-extract { transform: translateY(-110%) scale(1.05) !important; }
+
+        .show-card { opacity: 1 !important; visibility: visible !important; transform: translate(-50%, -50%) scale(1) !important; }
+        .blur-bg { filter: blur(12px); }
+        .text-reveal { opacity: 1 !important; transform: translateY(0) !important; transition: all 1.2s ease; }
+
+    </style>
+</head>
+<body>
+
+    <audio id="chimes" src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3?filename=magical-sparkle-1-105151.mp3"></audio>
+
+    <div class="instruction-text" id="instruction">Tocca per aprire!</div>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="scene" id="main-scene">
+        <div class="box-container" id="gift-box">
+            <div class="box-shadow"></div>
+            <div class="box-base"></div>
+            
+            <div class="box-content-wrapper">
+                <div class="flowers-container">
+                    <div class="flower f1">🌸</div>
+                    <div class="flower f2">🌺</div>
+                    <div class="flower f3">🌷</div>
+                </div>
+                
+                <div class="envelope-wrapper" id="envelope">
+                    <div class="envelope-base">
+                        <div class="letter-inside" id="letter-mini">
+                            <div style="width:30px; height:1px; background:var(--v2-soft-gold); margin-bottom:5px;"></div>
+                            <div style="width:20px; height:1px; background:var(--v2-soft-gold);"></div>
+                        </div>
+                        <div class="envelope-front"></div>
+                        <div class="envelope-flap" id="flap"></div>
+                        <div class="wax-seal" id="seal">❤</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box-lid" id="lid">
+                <div class="ribbon-bow" id="bow">
+                    <svg viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="bowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#f1c5c9" />
+                                <stop offset="100%" style="stop-color:#e8a5b8" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M50 30 L30 55 M50 30 L70 55" stroke="url(#bowGrad)" stroke-width="9" stroke-linecap="round"/>
+                        <path d="M50 30 C20 30 10 5 30 10 C45 15 50 25 50 30Z" fill="url(#bowGrad)" stroke="#f1c5c9" stroke-width="3.9"/>
+                        <path d="M50 30 C80 30 90 5 70 10 C55 15 50 25 50 30Z" fill="url(#bowGrad)" stroke="#f1c5c9" stroke-width="3.9"/>
+                        <rect x="44" y="24" width="12" height="12" rx="3" fill="#f4d0d9" stroke="#e19da4" stroke-width="0.5"/>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-final" id="final-card">
+        <h1 class="message-title" id="title">Buona Festa della Mamma</h1>
+        
+        <div class="letter-image-container" id="letter-image">
+            <img src="https://images.unsplash.com/photo-1626976109816-08cef8600d7d?q=80&w=1000&auto=format&fit=crop" alt="Foto ricordo">
+        </div>
+
+            <p class="message-text" id="p1">
+                Grazie per tutto quello che fai per me, anche quando non lo dico abbastanza.
+            </p>
+            <br>
+            <p class="message-text" id="p2">
+                Il tuo affetto, la tua pazienza e la tua compagnia rendono ogni giorno più bello. Non potrei desiderare una mamma migliore.
+            </p>
+            <br>
+            <p class="message-text" id="p3" style="font-style: italic; color: var(--gold); font-weight: 600;">
+                Ti voglio bene, oggi e sempre, da Angelo ❤️
+            </p>
+    </div>
+
+    <script>
+        const box = document.getElementById('gift-box');
+        const lid = document.getElementById('lid');
+        const bow = document.getElementById('bow');
+        const envelope = document.getElementById('envelope');
+        const miniLetter = document.getElementById('letter-mini');
+        const finalCard = document.getElementById('final-card');
+        const scene = document.getElementById('main-scene');
+        const instruction = document.getElementById('instruction');
+        const chimes = document.getElementById('chimes');
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let isOpened = false;
+        let particles = [];
+        const colors = ['#f8e1e7', '#f1c5c9', '#fffcf9', '#d4af37'];
+
+        function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x; this.y = y;
+                this.vx = (Math.random() - 0.5) * 16;
+                this.vy = (Math.random() - 1) * 18 - 4;
+                this.size = Math.random() * 7 + 4;
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.life = 1;
+                this.decay = Math.random() * 0.007 + 0.004;
+                this.rotation = Math.random() * 360;
+            }
+            update() { this.x += this.vx; this.y += this.vy; this.vy += 0.22; this.life -= this.decay; this.rotation += 2; }
+            draw() {
+                ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.rotation * Math.PI / 180);
+                ctx.globalAlpha = this.life; ctx.fillStyle = this.color;
+                ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size); ctx.restore();
+            }
+        }
+
+        function createExplosion(x, y) { for (let i = 0; i < 120; i++) particles.push(new Particle(x, y)); }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach((p, i) => {
+                p.update(); p.draw();
+                if (p.life <= 0) particles.splice(i, 1);
+            });
+            if(particles.length > 0) requestAnimationFrame(animateParticles);
+        }
+
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+        box.addEventListener('click', async () => {
+            if (isOpened) return;
+            isOpened = true;
+
+            try { chimes.volume = 0.4; chimes.play(); } catch(e) {}
+            instruction.classList.add('fade-out');
+
+            box.classList.add('active');
+            await sleep(400);
+            bow.classList.add('untie');
+            await sleep(700);
+            lid.classList.add('open-lid');
+            
+            const rect = box.getBoundingClientRect();
+            createExplosion(rect.left + rect.width / 2, rect.top + 40);
+            animateParticles();
+
+            document.querySelectorAll('.flower').forEach((f, i) => {
+                setTimeout(() => f.classList.add('show'), 400 + (i * 300));
+            });
+
+            await sleep(1200);
+            envelope.classList.add('envelope-rise');
+
+            await sleep(1500);
+            envelope.classList.add('envelope-open');
+
+            await sleep(1200);
+            miniLetter.classList.add('letter-extract');
+            
+            await sleep(1000);
+            miniLetter.style.opacity = "0"; 
+            scene.classList.add('blur-bg');
+            finalCard.classList.add('show-card');
+
+            // Array di reveal aggiornato con l'immagine
+            const lines = ['title', 'letter-image', 'p1', 'p2', 'p3'];
+            for (let id of lines) {
+                await sleep(800);
+                document.getElementById(id).classList.add('text-reveal');
+            }
+        });
+    </script>
+</body>
+</html>
